@@ -95,7 +95,9 @@ public class Main {
                     System.out.println("Ordenação dos pedidos pela data:");
                     pedidoTree.inOrderTraversalWithLocation();
                     break;
-
+/**
+ * a venda esta por algum motivo retoranndo venda nao encontrada apos deletar
+ */
                 case 6:
                     System.out.println("Digite o ID da venda que deseja remover:");
                     int idVendaRemover = scanner.nextInt();
