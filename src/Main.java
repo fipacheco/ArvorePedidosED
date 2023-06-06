@@ -1,5 +1,8 @@
 import java.util.Date;
 import java.util.Scanner;
+import java.util.Stack;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 public class Main {
     public static void main(String[] args) {
@@ -14,8 +17,9 @@ public class Main {
             System.out.println("2 - Visualizar todas as vendas");
             System.out.println("3 - Ver status da venda");
             System.out.println("4 - Atualizar status da venda");
-            System.out.println("5 - Exibir ordenação dos pedidos pela data");
+            System.out.println("5 - Exibir ordenação dos pedidos pela data mostrando onde ele se encontra na arvore");
             System.out.println("6 - Remover venda");
+            System.out.println("7 - Exibir ordenação dos pedidos por valor");
             System.out.println("0 - Sair");
 
             int opcao = scanner.nextInt();
@@ -92,7 +96,7 @@ public class Main {
                     break;
 
                 case 5:
-                    System.out.println("Ordenação dos pedidos pela data:");
+                    System.out.println("Ordenação dos pedidos pela data mostrando onde ele se encontra na arvore:");
                     pedidoTree.inOrderTraversalWithLocation();
                     break;
 /**
@@ -108,6 +112,11 @@ public class Main {
                     } else {
                         System.out.println("Venda não encontrada!");
                     }
+                    break;
+
+                    case 7:
+                    System.out.println("Ordenação dos pedidos por valor (maior para menor):");
+                    pedidoTree.visualizarVendasPorValor();
                     break;
 
                 case 0:

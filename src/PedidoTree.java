@@ -1,115 +1,138 @@
-public class PedidoTree {
-    private Node root;
+    import java.util.Stack;
+    import java.util.Comparator;
+    import java.util.ArrayList;
+    import java.util.List;
+   ;
 
-    public PedidoTree() {
-        root = null;
-    }
+    public class PedidoTree {
+        private Node root;
 
-    public Node getRoot() {
-        return root;
-    }
+        public PedidoTree() {
+            root = null;
+        }
 
-    public void adicionarPedido(Pedido pedido) {
-        Node newNode = new Node(pedido);
+        public Node getRoot() {
+            return root;
+        }
 
-        if (root == null) {
-            root = newNode;
-        } else {
-            Node current = root;
-            Node parent;
+        public void adicionarPedido(Pedido pedido) {
+            Node newNode = new Node(pedido);
 
-            while (true) {
-                parent = current;
+            if (root == null) {
+                root = newNode;
+            } else {
+                Node current = root;
+                Node parent;
 
-                if (pedido.getData().before(current.pedido.getData())) {
-                    current = current.left;
+                while (true) {
+                    parent = current;
 
-                    if (current == null) {
-                        parent.left = newNode;
-                        return;
-                    }
-                } else {
-                    current = current.right;
+                    if (pedido.getData().before(current.pedido.getData())) {
+                        current = current.left;
 
-                    if (current == null) {
-                        parent.right = newNode;
-                        return;
+                        if (current == null) {
+                            parent.left = newNode;
+                            return;
+                        }
+                    } else {
+                        current = current.right;
+
+                        if (current == null) {
+                            parent.right = newNode;
+                            return;
+                        }
                     }
                 }
             }
         }
-    }
 
-    public Node buscarPedido(Node root, int id) {
-        if (root == null || root.pedido.getId() == id) {
+        public Node buscarPedido(Node root, int id) {
+            if (root == null || root.pedido.getId() == id) {
+                return root;
+            }
+
+            if (id < root.pedido.getId()) {
+                return buscarPedido(root.left, id);
+            }
+
+            return buscarPedido(root.right, id);
+        }
+
+        public void visualizarTodasAsVendas() {
+            inOrderTraversal(root);
+        }
+
+        private void inOrderTraversal(Node root) {
+            if (root != null) {
+                inOrderTraversal(root.left);
+                System.out.println(root.pedido.toString());
+                inOrderTraversal(root.right);
+            }
+        }
+
+        public void inOrderTraversalWithLocation() {
+            inOrderTraversalRecWithLocation(root, "");
+        }
+
+        private void inOrderTraversalRecWithLocation(Node root, String location) {
+            if (root != null) {
+                inOrderTraversalRecWithLocation(root.left, location + "(" + root.pedido.getId() + ") [ESQUERDA] ");
+                System.out.println(root.pedido.toString() + " " + location);
+                inOrderTraversalRecWithLocation(root.right, location +  "(" + root.pedido.getId() + ") [DIREITA] ");
+            }
+        }
+        public void visualizarVendasPorValor() {
+            List<Pedido> pedidos = new ArrayList<>();
+            inOrderTraversalToList(root, pedidos);
+
+            pedidos.sort(Comparator.comparingDouble(Pedido::getValor).reversed());
+
+            for (Pedido pedido : pedidos) {
+                System.out.println(pedido.toString());
+            }
+        }
+
+        private void inOrderTraversalToList(Node root, List<Pedido> pedidos) {
+            if (root != null) {
+                inOrderTraversalToList(root.left, pedidos);
+                pedidos.add(root.pedido);
+                inOrderTraversalToList(root.right, pedidos);
+            }
+        }
+        public boolean removerPedido(int id) {
+            root = removerPedidoRec(root, id);
+            return root != null;
+        }
+
+        private Node removerPedidoRec(Node root, int id) {
+            if (root == null) {
+                return null;
+            }
+
+            if (id < root.pedido.getId()) {
+                root.left = removerPedidoRec(root.left, id);
+            } else if (id > root.pedido.getId()) {
+                root.right = removerPedidoRec(root.right, id);
+            } else {
+                if (root.left == null) {
+                    return root.right;
+                } else if (root.right == null) {
+                    return root.left;
+                }
+
+                Node sucessor = encontrarSucessor(root.right);
+                root.pedido = sucessor.pedido;
+                root.right = removerPedidoRec(root.right, sucessor.pedido.getId());
+            }
+
             return root;
         }
 
-        if (id < root.pedido.getId()) {
-            return buscarPedido(root.left, id);
-        }
-
-        return buscarPedido(root.right, id);
-    }
-
-    public void visualizarTodasAsVendas() {
-        inOrderTraversal(root);
-    }
-
-    private void inOrderTraversal(Node root) {
-        if (root != null) {
-            inOrderTraversal(root.left);
-            System.out.println(root.pedido.toString());
-            inOrderTraversal(root.right);
-        }
-    }
-
-    public void inOrderTraversalWithLocation() {
-        inOrderTraversalRecWithLocation(root, "");
-    }
-
-    private void inOrderTraversalRecWithLocation(Node root, String location) {
-        if (root != null) {
-            inOrderTraversalRecWithLocation(root.left, location + "(" + root.pedido.getId() + ") [ESQUERDA] ");
-            System.out.println(root.pedido.toString() + " " + location);
-            inOrderTraversalRecWithLocation(root.right, location + "(" + root.pedido.getId() + ") [DIREITA] ");
-        }
-    }
-
-    public boolean removerPedido(int id) {
-        root = removerPedidoRec(root, id);
-        return root != null;
-    }
-
-    private Node removerPedidoRec(Node root, int id) {
-        if (root == null) {
-            return null;
-        }
-
-        if (id < root.pedido.getId()) {
-            root.left = removerPedidoRec(root.left, id);
-        } else if (id > root.pedido.getId()) {
-            root.right = removerPedidoRec(root.right, id);
-        } else {
-            if (root.left == null) {
-                return root.right;
-            } else if (root.right == null) {
-                return root.left;
+        private Node encontrarSucessor(Node node) {
+            Node atual = node;
+            while (atual.left != null) {
+                atual = atual.left;
             }
-
-            Node sucessor = encontrarSucessor(root.right);
-            root.pedido = sucessor.pedido;
-            root.right = removerPedidoRec(root.right, sucessor.pedido.getId());
+            return atual;
         }
-
-        return root;
     }
-
-    private Node encontrarSucessor(Node node) {
-        Node atual = node;
-        while (atual.left != null) {
-            atual = atual.left;
-        }
-        return atual;
-    }
-}
