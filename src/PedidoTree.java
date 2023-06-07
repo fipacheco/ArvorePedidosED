@@ -13,7 +13,6 @@ public class PedidoTree {
     public Node getRoot() {
         return root;
     }
-
     // Adiciona um pedido à árvore
     public void adicionarPedido(Pedido pedido) {
         Node newNode = new Node(pedido);
@@ -29,20 +28,21 @@ public class PedidoTree {
                 parent = current;
 
                 if (pedido.getData().before(current.pedido.getData())) {
-                    // Se a data do pedido é anterior à data do nó atual, vai para a esquerda
+                    // Se a data do pedido eh anterior a data do no atual, vai para a esquerda
                     current = current.left;
 
                     if (current == null) {
-                        // Se o nó à esquerda é nulo, insere o novo nó ali
+                        // Se o nó a esquerda eh nulo, insere o novo no ali
                         parent.left = newNode;
                         return;
                     }
                 } else {
-                    // Se a data do pedido é posterior ou igual à data do nó atual, vai para a direita
+                    // Se a data do pedido eh posterior ou igual a data do no atual, vai para a direita
+
                     current = current.right;
 
                     if (current == null) {
-                        // Se o nó à direita é nulo, insere o novo nó ali
+                        // Se o no a direita eh nulo, insere o novo nó ali
                         parent.right = newNode;
                         return;
                     }
@@ -51,28 +51,26 @@ public class PedidoTree {
         }
     }
 
-    // Busca um pedido na árvore pelo ID
+     // busca pelo ID
     public Node buscarPedido(Node root, int id) {
         if (root == null || root.pedido.getId() == id) {
-            // Se o nó atual é nulo ou possui o ID buscado, retorna o nó
             return root;
         }
 
         if (id < root.pedido.getId()) {
-            // Se o ID buscado é menor, busca na subárvore esquerda
+            // Se o ID buscado eh menor, busca no galho a esquerda
             return buscarPedido(root.left, id);
-        } else {
-            // Se o ID buscado é maior, busca na subárvore direita
-            return buscarPedido(root.right, id);
         }
+        // Se o ID buscado eh maior, busca no galho a direita
+
+        return buscarPedido(root.right, id);
     }
 
-    // Visualiza todas as vendas em ordem crescente
     public void visualizarTodasAsVendas() {
+        // mostra as vendas em ordem crescente
         inOrderTraversal(root);
     }
-
-    // Traversa a árvore em ordem crescente e imprime as informações dos pedidos
+    // percorre a arvore em ordem e imprimir cada pedido.
     private void inOrderTraversal(Node root) {
         if (root != null) {
             inOrderTraversal(root.left);
@@ -80,8 +78,22 @@ public class PedidoTree {
             inOrderTraversal(root.right);
         }
     }
+    // percorre a arvore em ordem e imprimir cada pedido junto com a localizacao de cada no
 
-    // Visualiza as vendas ordenadas por valor em ordem decrescente
+    public void inOrderTraversalWithLocation() {
+
+        inOrderTraversalRecWithLocation(root, "");
+    }
+
+    private void inOrderTraversalRecWithLocation(Node root, String location) {
+        if (root != null) {
+            inOrderTraversalRecWithLocation(root.left, location + "(" + root.pedido.getId() + ") [ESQUERDA] ");
+            System.out.println(root.pedido.toString() + " " + location);
+            inOrderTraversalRecWithLocation(root.right, location +  "(" + root.pedido.getId() + ") [DIREITA] ");
+        }
+    }
+
+    // impressao de pedidos por ordem decrescente de valor.
     public void visualizarVendasPorValor() {
         List<Pedido> pedidos = new ArrayList<>();
         inOrderTraversalToList(root, pedidos);
@@ -93,7 +105,6 @@ public class PedidoTree {
         }
     }
 
-    // Traversa a árvore em ordem crescente e adiciona os pedidos em uma lista
     private void inOrderTraversalToList(Node root, List<Pedido> pedidos) {
         if (root != null) {
             inOrderTraversalToList(root.left, pedidos);
@@ -102,36 +113,29 @@ public class PedidoTree {
         }
     }
 
-    // Remove um pedido da árvore pelo ID
+    // remove o pedido com o ID especificado da árvore
     public boolean removerPedido(int id) {
         root = removerPedidoRec(root, id);
         return root != null;
     }
 
-    // Remove recursivamente um pedido da árvore
+    // percorre a arvore para remover o pedido desejado
     private Node removerPedidoRec(Node root, int id) {
         if (root == null) {
-            // Se o nó é nulo, retorna nulo
             return null;
         }
 
         if (id < root.pedido.getId()) {
-            // Se o ID buscado é menor, busca na subárvore esquerda
             root.left = removerPedidoRec(root.left, id);
         } else if (id > root.pedido.getId()) {
-            // Se o ID buscado é maior, busca na subárvore direita
             root.right = removerPedidoRec(root.right, id);
         } else {
-            // Se encontrou o nó com o ID buscado
             if (root.left == null) {
-                // Se o nó não tem filho à esquerda, retorna o filho à direita
                 return root.right;
             } else if (root.right == null) {
-                // Se o nó não tem filho à direita, retorna o filho à esquerda
                 return root.left;
             }
 
-            // Se o nó tem dois filhos, encontra o sucessor para substituir o nó
             Node sucessor = encontrarSucessor(root.right);
             root.pedido = sucessor.pedido;
             root.right = removerPedidoRec(root.right, sucessor.pedido.getId());
@@ -139,8 +143,7 @@ public class PedidoTree {
 
         return root;
     }
-
-    // Encontra o sucessor de um nó (nó mais à esquerda na subárvore direita)
+    //encontra o no sucessor
     private Node encontrarSucessor(Node node) {
         Node atual = node;
         while (atual.left != null) {
