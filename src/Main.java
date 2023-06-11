@@ -110,7 +110,7 @@ public class Main {
                     if (removido) {
                         System.out.println("Venda #" + idVendaRemover + " removida com sucesso!");
                     } else {
-                        System.out.println("Venda não encontrada!");
+                        System.out.println("Venda não encontrada! Verifique o ID digitado e tente novamente");
                     }
                     break;
 

@@ -65,7 +65,21 @@ public class PedidoTree {
 
         return buscarPedido(root.right, id);
     }
+    public boolean existePedido(int id) {
+        return encontrarPedido(root, id) != null;
+    }
 
+    private Node encontrarPedido(Node root, int id) {
+        if (root == null || root.pedido.getId() == id) {
+            return root;
+        }
+
+        if (id < root.pedido.getId()) {
+            return encontrarPedido(root.left, id);
+        } else {
+            return encontrarPedido(root.right, id);
+        }
+    }
     public void visualizarTodasAsVendas() {
         // mostra as vendas em ordem crescente
         inOrderTraversal(root);
@@ -115,21 +129,26 @@ public class PedidoTree {
 
     // remove o pedido com o ID especificado da árvore
     public boolean removerPedido(int id) {
-        root = removerPedidoRec(root, id);
-        return root != null;
+        ResultadoRemocao resultado = new ResultadoRemocao();
+        root = removerPedidoRec(root, id, resultado);
+        return resultado.isRemovido();
     }
 
     // percorre a arvore para remover o pedido desejado
-    private Node removerPedidoRec(Node root, int id) {
+
+    private Node removerPedidoRec(Node root, int id, ResultadoRemocao resultado) {
         if (root == null) {
+            resultado.setRemovido(false);
             return null;
         }
 
         if (id < root.pedido.getId()) {
-            root.left = removerPedidoRec(root.left, id);
+            root.left = removerPedidoRec(root.left, id, resultado);
         } else if (id > root.pedido.getId()) {
-            root.right = removerPedidoRec(root.right, id);
+            root.right = removerPedidoRec(root.right, id, resultado);
         } else {
+            resultado.setRemovido(true);
+
             if (root.left == null) {
                 return root.right;
             } else if (root.right == null) {
@@ -138,11 +157,12 @@ public class PedidoTree {
 
             Node sucessor = encontrarSucessor(root.right);
             root.pedido = sucessor.pedido;
-            root.right = removerPedidoRec(root.right, sucessor.pedido.getId());
+            root.right = removerPedidoRec(root.right, sucessor.pedido.getId(), resultado);
         }
 
         return root;
     }
+
     //encontra o no sucessor
     private Node encontrarSucessor(Node node) {
         Node atual = node;
